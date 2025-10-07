@@ -1,0 +1,850 @@
+{
+  "name": "Job Seeking",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1200,
+        608
+      ],
+      "id": "b06dee7f-4c8d-4544-a76c-1fd38fdea108",
+      "name": "Schedule Trigger",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "url": "https://rss.app/feeds/ySLwKkh3vXeWMo0W.xml",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        -976,
+        608
+      ],
+      "id": "645f0686-17f3-4403-a502-12f3122eb2b7",
+      "name": "RSS Read"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1xYqLzkhBFHL3TrfrwqK5ccxYFw2tGwVvc19wvIi0a_k/edit\t",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 247069507,
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xYqLzkhBFHL3TrfrwqK5ccxYFw2tGwVvc19wvIi0a_k/edit#gid=247069507"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Title": "={{ $('RSS Read').item.json.title }}",
+            "Link": "={{ $('RSS Read').item.json.link }}",
+            "Date": "={{ $('RSS Read').item.json.pubDate }}",
+            "Job Description": "={{ $('OpenAI').item.json.message.content.job_description }}",
+            "Cover Letter": "={{ $json.choices[0].message.content.cover_letter }}",
+            "Rating": "={{ $('OpenAI1').item.json.choices[0].message.content.score }}",
+            "Company Name": "={{ $('OpenAI').item.json.message.content.company_name }}",
+            "Benefits": "={{ $('OpenAI').item.json.message.content.benefits }}"
+          },
+          "matchingColumns": [
+            "Title"
+          ],
+          "schema": [
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Job Description",
+              "displayName": "Job Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Link",
+              "displayName": "Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Rating",
+              "displayName": "Rating",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Company Name",
+              "displayName": "Company Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Benefits",
+              "displayName": "Benefits",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Job Description",
+              "displayName": "Job Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Cover Letter",
+              "displayName": "Cover Letter",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        832,
+        608
+      ],
+      "id": "9f855e6b-35ca-41de-a1ff-6cc32e5f9704",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "6PAYNxKq6S7PpC0u",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $('RSS Read').item.json.link }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -544,
+        608
+      ],
+      "id": "0f5f5bfd-bb11-4736-8227-90c8b7ad7def",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You're an intelligent bot perfect at creating cover letters for a job. Please take the candidates resume and create a customized cover letter to the job.",
+              "role": "system"
+            },
+            {
+              "content": "=Here's the job listing details:\nTitle: {{ $('RSS Read').item.json.title }}\nDescription: {{ $('OpenAI').item.json.message.content.job_description }}\nName: {{ $('OpenAI').item.json.message.content.company_name }}\nLocation: {{ $('OpenAI').item.json.message.content.location }}\n\nHere is the candidates skill set:\n📄 SAMPLE RESUME\n\nNISHANT UPADHYAY\nupadhyay.nis@northeastern.edu | 857-351-8056 | GitHub | linkedin.com/nishantsupadhyay\nEDUCATION\nMaster of Science in Data Analytics Engineering | Northeastern University | Boston, MA Sep 2024 - Present\nCoursework: Data Management for Analytics, Data Mining, ML Operations, Neural networks/deep learning, Applied GenAI\nBachelor of Science in Information Technology | Mumbai University | Mumbai, India Jul 2019 - May 2022\nCoursework: Python Programming, DBMS, Data Structure, Applied Statistics, Business Intelligence, OOP\nTECHNICAL SKILLS\nProgramming & Analytics\n:\nPython, SQL, SAS, R, VBA, DAX, PySpark\nDatabases and Cloud\n:\nMS SQL Server, PostgreSQL, Snowflake, MongoDB, Kafka, AWS (Redshift, Quicksight)\nPython Libraries\n:\nPandas, NumPy, Scikit-Learn, NLTK, TensorFlow, Seaborn, Matplotlib, ggplot2\nMachine Learning\n:\nClassification, Regression, NLP, XGBoost, Clustering, Naïve Bayes, ARIMA, A/B Testing\nVisualization and Reporting\n:\nPower BI, Tableau, Excel ( Pivot Tables ), QlikView, Alteryx, Google Data Studio\nCollaboration and Tools\n:\nGitHub, Jupyter Notebook, PyCharm, Visual Studio code, Agile/Scrum\nCertifications\n:\nUPGRAD-Python for Data Science, DELOITTE-Software Testing, UDEMY-MySQL\nPROFESSIONAL EXPERIENCE\nData Analyst | DELOITTE USI Oct 2022 - Aug 2024\n● Built real-time dashboards in Power BI/Azure to track KPIs such as retention, conversion, and response times, improving leadership visibility into business performance\n● Designed Python preprocessing workflows for feature extraction, reducing model training time by 30%\n● Built and automated ETL pipelines consolidating multi-source data, reducing refresh delays and boosting dashboard reliability\n● Automated 20+ reporting workflows with GitHub Actions, saving 12+ hours weekly and enabling faster decision-making\n● Collaborated with cross-functional teams to scope use cases where analytics improved productivity, influencing 3+ major process improvement initiatives\n● Delivered insights on utilization and throughput metrics, helping managers reallocate resources and avoid bottlenecks\nData Science Intern | ROOPALI ECOMMERCE Mar 2022 - Sep 2022\n● Built demand forecasting models (XGBoost, Regression) that improved inventory turnover by 10% and reduced stockouts by 8% per quarter\n● Developed Power BI dashboards integrating SQL + DAX to uncover customer purchasing patterns, repeat buyer behavior, and seasonal demand cycles from 1M+ transactions\n● Identified seasonal purchase peaks that drove 15% higher peak-season revenue through improved allocation strategies\n● Applied K-Means clustering to segment customers by frequency and basket size, enabling data-driven loyalty campaigns and discount bundling strategies\n● Automated weekly reporting scripts in Python, saving ~5 hours/week of manual effort\nPROJECTS\nHeart Disease Prediction | Python, Scikit-learn, XGBoost, Logistic Regression, Random Forest, Neural Network, SMOTE\n● Developed and compared Logistic Regression, Random Forest, XGBoost, and Neural Network models on patient clinical data, achieving ROC-AUC scores above 0.83 to predict heart disease\n● Applied SHAP-based feature importance analysis to identify key clinical indicators (thalach, chest pain type, oldpeak), improving model interpretability for clinical decision support\nExcel Copilot for Automated Insights | Python (OpenAI API, Pandas), Excel (VBA/Power Query), Power BI, Azure\n● Integrated LLM APIs with Excel to allow analysts to query spreadsheets in natural language (“What are the top drivers of revenue decline in Q3?”).\n● Built a Copilot add-in that auto-explains trends, anomalies, and charts, reducing manual reporting effort by 40% while enhancing stakeholder understanding.\n● Deployed on Azure as a lightweight app, enabling seamless access without disrupting existing Excel workflows.\nMedical Imaging Classification | Python (TensorFlow, Keras, PyTorch, OpenCV), CNNs, Image Preprocessing\n● Implemented CNN models on chest X-rays to detect abnormalities, achieving 92% classification accuracy\n● Applied transfer learning and data augmentation, enabling model performance on limited medical datasets"
+            },
+            {
+              "content": "Please return JSON data structured the following way:\n{\n\"cover_letter\": \"\"\n}",
+              "role": "assistant"
+            }
+          ]
+        },
+        "simplify": false,
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        448,
+        608
+      ],
+      "id": "cc860720-867b-4564-a469-8f836cc1b9d6",
+      "name": "OpenAI2",
+      "credentials": {
+        "openAiApi": {
+          "id": "IeEnEGpra2m66KTB",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You're an intelligent bot rating how closely a job listing is to a candidates skill set, on a score of 5.\nGive the following points:\na) 3 points for skills matching, 1 point for mostly matching\nb) 1 point for it being the right experience level\nc) 1 point for it being a remote position\nd) 1 point if past job experience matches the job role\ne) 1 point if the skills on the resume align with the job\nf) 3 points if I meet the job qualifications posted based on my resume",
+              "role": "system"
+            },
+            {
+              "content": "=Here's the job listing details:\n{{ $('HTTP Request').item.json.data }}\n\nHere is the candidates skill set:\n📄 SAMPLE RESUME\n\nNISHANT UPADHYAY\nupadhyay.nis@northeastern.edu | 857-351-8056 | GitHub | linkedin.com/nishantsupadhyay\nEDUCATION\nMaster of Science in Data Analytics Engineering | Northeastern University | Boston, MA Sep 2024 - Present\nCoursework: Data Management for Analytics, Data Mining, ML Operations, Neural networks/deep learning, Applied GenAI\nBachelor of Science in Information Technology | Mumbai University | Mumbai, India Jul 2019 - May 2022\nCoursework: Python Programming, DBMS, Data Structure, Applied Statistics, Business Intelligence, OOP\nTECHNICAL SKILLS\nProgramming & Analytics\n:\nPython, SQL, SAS, R, VBA, DAX, PySpark\nDatabases and Cloud\n:\nMS SQL Server, PostgreSQL, Snowflake, MongoDB, Kafka, AWS (Redshift, Quicksight)\nPython Libraries\n:\nPandas, NumPy, Scikit-Learn, NLTK, TensorFlow, Seaborn, Matplotlib, ggplot2\nMachine Learning\n:\nClassification, Regression, NLP, XGBoost, Clustering, Naïve Bayes, ARIMA, A/B Testing\nVisualization and Reporting\n:\nPower BI, Tableau, Excel ( Pivot Tables ), QlikView, Alteryx, Google Data Studio\nCollaboration and Tools\n:\nGitHub, Jupyter Notebook, PyCharm, Visual Studio code, Agile/Scrum\nCertifications\n:\nUPGRAD-Python for Data Science, DELOITTE-Software Testing, UDEMY-MySQL\nPROFESSIONAL EXPERIENCE\nData Analyst | DELOITTE USI Oct 2022 - Aug 2024\n● Built real-time dashboards in Power BI/Azure to track KPIs such as retention, conversion, and response times, improving leadership visibility into business performance\n● Designed Python preprocessing workflows for feature extraction, reducing model training time by 30%\n● Built and automated ETL pipelines consolidating multi-source data, reducing refresh delays and boosting dashboard reliability\n● Automated 20+ reporting workflows with GitHub Actions, saving 12+ hours weekly and enabling faster decision-making\n● Collaborated with cross-functional teams to scope use cases where analytics improved productivity, influencing 3+ major process improvement initiatives\n● Delivered insights on utilization and throughput metrics, helping managers reallocate resources and avoid bottlenecks\nData Science Intern | ROOPALI ECOMMERCE Mar 2022 - Sep 2022\n● Built demand forecasting models (XGBoost, Regression) that improved inventory turnover by 10% and reduced stockouts by 8% per quarter\n● Developed Power BI dashboards integrating SQL + DAX to uncover customer purchasing patterns, repeat buyer behavior, and seasonal demand cycles from 1M+ transactions\n● Identified seasonal purchase peaks that drove 15% higher peak-season revenue through improved allocation strategies\n● Applied K-Means clustering to segment customers by frequency and basket size, enabling data-driven loyalty campaigns and discount bundling strategies\n● Automated weekly reporting scripts in Python, saving ~5 hours/week of manual effort\nPROJECTS\nHeart Disease Prediction | Python, Scikit-learn, XGBoost, Logistic Regression, Random Forest, Neural Network, SMOTE\n● Developed and compared Logistic Regression, Random Forest, XGBoost, and Neural Network models on patient clinical data, achieving ROC-AUC scores above 0.83 to predict heart disease\n● Applied SHAP-based feature importance analysis to identify key clinical indicators (thalach, chest pain type, oldpeak), improving model interpretability for clinical decision support\nExcel Copilot for Automated Insights | Python (OpenAI API, Pandas), Excel (VBA/Power Query), Power BI, Azure\n● Integrated LLM APIs with Excel to allow analysts to query spreadsheets in natural language (“What are the top drivers of revenue decline in Q3?”).\n● Built a Copilot add-in that auto-explains trends, anomalies, and charts, reducing manual reporting effort by 40% while enhancing stakeholder understanding.\n● Deployed on Azure as a lightweight app, enabling seamless access without disrupting existing Excel workflows.\nMedical Imaging Classification | Python (TensorFlow, Keras, PyTorch, OpenCV), CNNs, Image Preprocessing\n● Implemented CNN models on chest X-rays to detect abnormalities, achieving 92% classification accuracy\n● Applied transfer learning and data augmentation, enabling model performance on limited medical datasets"
+            },
+            {
+              "content": "Please return JSON data structured the following way:\n{\n\"score\": \"\"\n}",
+              "role": "assistant"
+            }
+          ]
+        },
+        "simplify": false,
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        64,
+        608
+      ],
+      "id": "503bf468-e726-472c-b8e2-5e5ac71e795f",
+      "name": "OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "IeEnEGpra2m66KTB",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -768,
+        608
+      ],
+      "id": "1f6df373-ce11-4c83-a69c-947829c5d1d7",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "url": "https://rss.app/feeds/ySLwKkh3vXeWMo0W.xml",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        688,
+        0
+      ],
+      "id": "6f370d8d-2746-4a03-b263-83606d47cb03",
+      "name": "RSS Read1"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "7a9afe36-ccc4-4be9-aca1-88019a6a4378",
+      "name": "Schedule Trigger1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "993ff775-0e35-4844-8b30-6d19f605cbfa",
+              "name": "RSS feeds",
+              "value": "[\"https://rss.app/feeds/eLi2CzXTaHeeHkNE.xml\", \"https://rss.app/feeds/eLi2CzXTaHeeHkNE.xml\"]",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        0
+      ],
+      "id": "f460a043-09e8-49a3-be96-c8828cbf3596",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "['RSS feeds']",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        448,
+        0
+      ],
+      "id": "c7cd1fd8-2763-44ea-b6b6-75fbe8d4e8fb",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You're an intelligent bot capable of pulling out data from a job listing site.",
+              "role": "system"
+            },
+            {
+              "content": "=Here's the job site:\n {{ $json.data }}"
+            },
+            {
+              "content": "Please output the data in JSON format, using the following structure:\n\n{\n\"company_name\": \"\",\n\"benefits\": \"\", //401K plan, medical, etc, please separate by commas\n\"job_description\": \"\", //please make it 200 characters or less\n\"location\": \"\"\n}",
+              "role": "assistant"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -320,
+        608
+      ],
+      "id": "8aa57615-cab4-45a5-9f14-a99a0350b912",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "IeEnEGpra2m66KTB",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "RSS Read": [
+      {
+        "json": {
+          "creator": "LinkedIn",
+          "title": "Finance and Accounting Online Training Courses | LinkedIn Learning, formerly Lynda.com",
+          "link": "https://www.linkedin.com/learning/topics/finance-and-accounting",
+          "pubDate": "Sun, 05 Oct 2025 02:18:54 GMT",
+          "dc:creator": "LinkedIn",
+          "content": "<div><img src=\"https://static.licdn.com/aero-v1/sc/h/50i85klb0hydcf45ieglfsw4w\" style=\"width: 100%;\" /><div>Our Finance and Accounting online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Finance and Accounting classes to find exactly what you’re looking for.</div></div>",
+          "contentSnippet": "Our Finance and Accounting online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Finance and Accounting classes to find exactly what you’re looking for.",
+          "guid": "c94fb4cef4ea96661419538f22348e96",
+          "isoDate": "2025-10-05T02:18:54.000Z"
+        }
+      },
+      {
+        "json": {
+          "creator": "LinkedIn",
+          "title": "Business Analysis and Strategy Online Training Courses | LinkedIn Learning, formerly Lynda.com",
+          "link": "https://www.linkedin.com/learning/topics/business-analysis-and-strategy",
+          "pubDate": "Sun, 05 Oct 2025 01:18:50 GMT",
+          "dc:creator": "LinkedIn",
+          "content": "<div><img src=\"https://static.licdn.com/aero-v1/sc/h/50i85klb0hydcf45ieglfsw4w\" style=\"width: 100%;\" /><div>Our Business Analysis and Strategy online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Business Analysis and Strategy classes to find exactly what you’re looking for.</div></div>",
+          "contentSnippet": "Our Business Analysis and Strategy online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Business Analysis and Strategy classes to find exactly what you’re looking for.",
+          "guid": "73e58765596e60e9a95f2b549ad2d747",
+          "isoDate": "2025-10-05T01:18:50.000Z"
+        }
+      },
+      {
+        "json": {
+          "creator": "LinkedIn",
+          "title": "Artificial Intelligence for Business Online Training Courses | LinkedIn Learning, formerly Lynda.com",
+          "link": "https://www.linkedin.com/learning/topics/artificial-intelligence-for-business-29605417",
+          "pubDate": "Sun, 05 Oct 2025 01:18:50 GMT",
+          "dc:creator": "LinkedIn",
+          "content": "<div><img src=\"https://static.licdn.com/aero-v1/sc/h/50i85klb0hydcf45ieglfsw4w\" style=\"width: 100%;\" /><div>Our Artificial Intelligence for Business online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Artificial Intelligence for Business classes to find exactly what you’re looking for.</div></div>",
+          "contentSnippet": "Our Artificial Intelligence for Business online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Artificial Intelligence for Business classes to find exactly what you’re looking for.",
+          "guid": "0659e25dd981b89e81d79acc8b54cd03",
+          "isoDate": "2025-10-05T01:18:50.000Z"
+        }
+      },
+      {
+        "json": {
+          "creator": "LinkedIn",
+          "title": "Software Development Online Training Courses | LinkedIn Learning, formerly Lynda.com",
+          "link": "https://www.linkedin.com/learning/topics/software-development",
+          "pubDate": "Sun, 05 Oct 2025 01:18:50 GMT",
+          "dc:creator": "LinkedIn",
+          "content": "<div><img src=\"https://static.licdn.com/aero-v1/sc/h/50i85klb0hydcf45ieglfsw4w\" style=\"width: 100%;\" /><div>Our Software Development online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Software Development classes to find exactly what you’re looking for.</div></div>",
+          "contentSnippet": "Our Software Development online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Software Development classes to find exactly what you’re looking for.",
+          "guid": "9d5eed9a7bc931d82da52d0bf14e8b31",
+          "isoDate": "2025-10-05T01:18:50.000Z"
+        }
+      },
+      {
+        "json": {
+          "creator": "LinkedIn",
+          "title": "Mobile Development Online Training Courses | LinkedIn Learning, formerly Lynda.com",
+          "link": "https://www.linkedin.com/learning/topics/mobile-development",
+          "pubDate": "Sun, 05 Oct 2025 01:18:50 GMT",
+          "dc:creator": "LinkedIn",
+          "content": "<div><img src=\"https://static.licdn.com/aero-v1/sc/h/50i85klb0hydcf45ieglfsw4w\" style=\"width: 100%;\" /><div>Our Mobile Development online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Mobile Development classes to find exactly what you’re looking for.</div></div>",
+          "contentSnippet": "Our Mobile Development online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Mobile Development classes to find exactly what you’re looking for.",
+          "guid": "9fd2f221527524fdf614175182bbf942",
+          "isoDate": "2025-10-05T01:18:50.000Z"
+        }
+      },
+      {
+        "json": {
+          "creator": "LinkedIn",
+          "title": "User Experience Online Training Courses | LinkedIn Learning, formerly Lynda.com",
+          "link": "https://www.linkedin.com/learning/topics/user-experience",
+          "pubDate": "Sun, 05 Oct 2025 00:18:45 GMT",
+          "dc:creator": "LinkedIn",
+          "content": "<div><img src=\"https://static.licdn.com/aero-v1/sc/h/50i85klb0hydcf45ieglfsw4w\" style=\"width: 100%;\" /><div>Our User Experience online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of User Experience classes to find exactly what you’re looking for.</div></div>",
+          "contentSnippet": "Our User Experience online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of User Experience classes to find exactly what you’re looking for.",
+          "guid": "06553d6d3e4affa3e2765a6d2caf4647",
+          "isoDate": "2025-10-05T00:18:45.000Z"
+        }
+      },
+      {
+        "json": {
+          "creator": "LinkedIn",
+          "title": "Audio and Music Online Training Courses | LinkedIn Learning, formerly Lynda.com",
+          "link": "https://www.linkedin.com/learning/topics/audio-and-music",
+          "pubDate": "Sun, 05 Oct 2025 00:18:45 GMT",
+          "dc:creator": "LinkedIn",
+          "content": "<div><img src=\"https://static.licdn.com/aero-v1/sc/h/50i85klb0hydcf45ieglfsw4w\" style=\"width: 100%;\" /><div>Our Audio and Music online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Audio and Music classes to find exactly what you’re looking for.</div></div>",
+          "contentSnippet": "Our Audio and Music online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Audio and Music classes to find exactly what you’re looking for.",
+          "guid": "4f8921dcdfb49fe14560e104491b7de2",
+          "isoDate": "2025-10-05T00:18:45.000Z"
+        }
+      },
+      {
+        "json": {
+          "creator": "LinkedIn",
+          "title": "Database Management Online Training Courses | LinkedIn Learning, formerly Lynda.com",
+          "link": "https://www.linkedin.com/learning/topics/database-management",
+          "pubDate": "Sun, 05 Oct 2025 00:18:45 GMT",
+          "dc:creator": "LinkedIn",
+          "content": "<div><img src=\"https://static.licdn.com/aero-v1/sc/h/50i85klb0hydcf45ieglfsw4w\" style=\"width: 100%;\" /><div>Our Database Management online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Database Management classes to find exactly what you’re looking for.</div></div>",
+          "contentSnippet": "Our Database Management online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Database Management classes to find exactly what you’re looking for.",
+          "guid": "bafb5333c539744cf2d796bffec4c758",
+          "isoDate": "2025-10-05T00:18:45.000Z"
+        }
+      },
+      {
+        "json": {
+          "creator": "LinkedIn",
+          "title": "Leadership and Management Online Training Courses | LinkedIn Learning, formerly Lynda.com",
+          "link": "https://www.linkedin.com/learning/topics/leadership-and-management",
+          "pubDate": "Sun, 05 Oct 2025 00:18:45 GMT",
+          "dc:creator": "LinkedIn",
+          "content": "<div><img src=\"https://static.licdn.com/aero-v1/sc/h/50i85klb0hydcf45ieglfsw4w\" style=\"width: 100%;\" /><div>Our Leadership and Management online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Leadership and Management classes to find exactly what you’re looking for.</div></div>",
+          "contentSnippet": "Our Leadership and Management online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Leadership and Management classes to find exactly what you’re looking for.",
+          "guid": "a32296383cb188a70cfece63ebfdde18",
+          "isoDate": "2025-10-05T00:18:45.000Z"
+        }
+      },
+      {
+        "json": {
+          "creator": "LinkedIn",
+          "title": "Product and Manufacturing Online Training Courses | LinkedIn Learning, formerly Lynda.com",
+          "link": "https://www.linkedin.com/learning/topics/product-and-manufacturing",
+          "pubDate": "Sun, 05 Oct 2025 00:18:45 GMT",
+          "dc:creator": "LinkedIn",
+          "content": "<div><img src=\"https://static.licdn.com/aero-v1/sc/h/50i85klb0hydcf45ieglfsw4w\" style=\"width: 100%;\" /><div>Our Product and Manufacturing online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Product and Manufacturing classes to find exactly what you’re looking for.</div></div>",
+          "contentSnippet": "Our Product and Manufacturing online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Product and Manufacturing classes to find exactly what you’re looking for.",
+          "guid": "cb412121d63b22e83344901bad9b3714",
+          "isoDate": "2025-10-05T00:18:45.000Z"
+        }
+      },
+      {
+        "json": {
+          "creator": "LinkedIn",
+          "title": "Visualization and Real-Time Online Training Courses | LinkedIn Learning, formerly Lynda.com",
+          "link": "https://www.linkedin.com/learning/topics/visualization-and-real-time",
+          "pubDate": "Sun, 05 Oct 2025 00:18:45 GMT",
+          "dc:creator": "LinkedIn",
+          "content": "<div><img src=\"https://static.licdn.com/aero-v1/sc/h/50i85klb0hydcf45ieglfsw4w\" style=\"width: 100%;\" /><div>Our Visualization and Real-Time online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Visualization and Real-Time classes to find exactly what you’re looking for.</div></div>",
+          "contentSnippet": "Our Visualization and Real-Time online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Visualization and Real-Time classes to find exactly what you’re looking for.",
+          "guid": "5246142a716d3949d58eccbc1e1dbfd9",
+          "isoDate": "2025-10-05T00:18:45.000Z"
+        }
+      },
+      {
+        "json": {
+          "creator": "LinkedIn",
+          "title": "Project Management Online Training Courses | LinkedIn Learning, formerly Lynda.com",
+          "link": "https://www.linkedin.com/learning/topics/project-management",
+          "pubDate": "Sun, 05 Oct 2025 00:18:45 GMT",
+          "dc:creator": "LinkedIn",
+          "content": "<div><img src=\"https://static.licdn.com/aero-v1/sc/h/50i85klb0hydcf45ieglfsw4w\" style=\"width: 100%;\" /><div>Our Project Management online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Project Management classes to find exactly what you’re looking for.</div></div>",
+          "contentSnippet": "Our Project Management online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Project Management classes to find exactly what you’re looking for.",
+          "guid": "39ccc3a7f5157ec8852cdd998e96dd3d",
+          "isoDate": "2025-10-05T00:18:45.000Z"
+        }
+      },
+      {
+        "json": {
+          "creator": "LinkedIn",
+          "title": "Network and System Administration Online Training Courses | LinkedIn Learning, formerly Lynda.com",
+          "link": "https://www.linkedin.com/learning/topics/network-and-system-administration",
+          "pubDate": "Sun, 05 Oct 2025 00:18:45 GMT",
+          "dc:creator": "LinkedIn",
+          "content": "<div><img src=\"https://static.licdn.com/aero-v1/sc/h/50i85klb0hydcf45ieglfsw4w\" style=\"width: 100%;\" /><div>Our Network and System Administration online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Network and System Administration classes to find exactly what you’re looking for.</div></div>",
+          "contentSnippet": "Our Network and System Administration online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Network and System Administration classes to find exactly what you’re looking for.",
+          "guid": "964f4a9af96dae67219af0be24fe50d4",
+          "isoDate": "2025-10-05T00:18:45.000Z"
+        }
+      },
+      {
+        "json": {
+          "creator": "LinkedIn",
+          "title": "IT Help Desk Online Training Courses | LinkedIn Learning, formerly Lynda.com",
+          "link": "https://www.linkedin.com/learning/topics/it-help-desk-5",
+          "pubDate": "Sun, 05 Oct 2025 00:18:45 GMT",
+          "dc:creator": "LinkedIn",
+          "content": "<div><img src=\"https://static.licdn.com/aero-v1/sc/h/50i85klb0hydcf45ieglfsw4w\" style=\"width: 100%;\" /><div>Our IT Help Desk online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of IT Help Desk classes to find exactly what you’re looking for.</div></div>",
+          "contentSnippet": "Our IT Help Desk online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of IT Help Desk classes to find exactly what you’re looking for.",
+          "guid": "a89623a4fd7f323c987765b416e38a95",
+          "isoDate": "2025-10-05T00:18:45.000Z"
+        }
+      },
+      {
+        "json": {
+          "creator": "LinkedIn",
+          "title": "Graphic Design Online Training Courses | LinkedIn Learning, formerly Lynda.com",
+          "link": "https://www.linkedin.com/learning/topics/graphic-design",
+          "pubDate": "Sun, 05 Oct 2025 00:18:45 GMT",
+          "dc:creator": "LinkedIn",
+          "content": "<div><img src=\"https://static.licdn.com/aero-v1/sc/h/50i85klb0hydcf45ieglfsw4w\" style=\"width: 100%;\" /><div>Our Graphic Design online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Graphic Design classes to find exactly what you’re looking for.</div></div>",
+          "contentSnippet": "Our Graphic Design online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Graphic Design classes to find exactly what you’re looking for.",
+          "guid": "6b9898baae94efe3be08eb6317f60f4d",
+          "isoDate": "2025-10-05T00:18:45.000Z"
+        }
+      },
+      {
+        "json": {
+          "creator": "LinkedIn",
+          "title": "Motion Graphics and VFX Online Training Courses | LinkedIn Learning, formerly Lynda.com",
+          "link": "https://www.linkedin.com/learning/topics/motion-graphics-and-vfx",
+          "pubDate": "Sun, 05 Oct 2025 00:18:45 GMT",
+          "dc:creator": "LinkedIn",
+          "content": "<div><img src=\"https://static.licdn.com/aero-v1/sc/h/50i85klb0hydcf45ieglfsw4w\" style=\"width: 100%;\" /><div>Our Motion Graphics and VFX online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Motion Graphics and VFX classes to find exactly what you’re looking for.</div></div>",
+          "contentSnippet": "Our Motion Graphics and VFX online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Motion Graphics and VFX classes to find exactly what you’re looking for.",
+          "guid": "eff1e4d0af25d75963f1d2aebe964729",
+          "isoDate": "2025-10-05T00:18:45.000Z"
+        }
+      },
+      {
+        "json": {
+          "creator": "LinkedIn",
+          "title": "Data Science Online Training Courses | LinkedIn Learning, formerly Lynda.com",
+          "link": "https://www.linkedin.com/learning/topics/data-science",
+          "pubDate": "Sun, 05 Oct 2025 00:18:45 GMT",
+          "dc:creator": "LinkedIn",
+          "content": "<div><img src=\"https://static.licdn.com/aero-v1/sc/h/50i85klb0hydcf45ieglfsw4w\" style=\"width: 100%;\" /><div>Our Data Science online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Data Science classes to find exactly what you’re looking for.</div></div>",
+          "contentSnippet": "Our Data Science online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Data Science classes to find exactly what you’re looking for.",
+          "guid": "2eb402ed945a305688db839a6172fd67",
+          "isoDate": "2025-10-05T00:18:45.000Z"
+        }
+      },
+      {
+        "json": {
+          "creator": "LinkedIn",
+          "title": "Career Development Online Training Courses | LinkedIn Learning, formerly Lynda.com",
+          "link": "https://www.linkedin.com/learning/topics/career-development-5",
+          "pubDate": "Sun, 05 Oct 2025 00:18:45 GMT",
+          "dc:creator": "LinkedIn",
+          "content": "<div><img src=\"https://static.licdn.com/aero-v1/sc/h/50i85klb0hydcf45ieglfsw4w\" style=\"width: 100%;\" /><div>Our Career Development online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Career Development classes to find exactly what you’re looking for.</div></div>",
+          "contentSnippet": "Our Career Development online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Career Development classes to find exactly what you’re looking for.",
+          "guid": "954f0f73d10b3c30587e66d7b388b25b",
+          "isoDate": "2025-10-05T00:18:45.000Z"
+        }
+      },
+      {
+        "json": {
+          "creator": "LinkedIn",
+          "title": "Web Design Online Training Courses | LinkedIn Learning, formerly Lynda.com",
+          "link": "https://www.linkedin.com/learning/topics/web-design",
+          "pubDate": "Sun, 05 Oct 2025 00:18:45 GMT",
+          "dc:creator": "LinkedIn",
+          "content": "<div><img src=\"https://static.licdn.com/aero-v1/sc/h/50i85klb0hydcf45ieglfsw4w\" style=\"width: 100%;\" /><div>Our Web Design online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Web Design classes to find exactly what you’re looking for.</div></div>",
+          "contentSnippet": "Our Web Design online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Web Design classes to find exactly what you’re looking for.",
+          "guid": "14026ccb3bdf263c20daba25a712e53d",
+          "isoDate": "2025-10-05T00:18:45.000Z"
+        }
+      },
+      {
+        "json": {
+          "creator": "LinkedIn",
+          "title": "Cloud Computing Online Training Courses | LinkedIn Learning, formerly Lynda.com",
+          "link": "https://www.linkedin.com/learning/topics/cloud-computing-5",
+          "pubDate": "Sun, 05 Oct 2025 00:18:45 GMT",
+          "dc:creator": "LinkedIn",
+          "content": "<div><img src=\"https://static.licdn.com/aero-v1/sc/h/50i85klb0hydcf45ieglfsw4w\" style=\"width: 100%;\" /><div>Our Cloud Computing online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Cloud Computing classes to find exactly what you’re looking for.</div></div>",
+          "contentSnippet": "Our Cloud Computing online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Cloud Computing classes to find exactly what you’re looking for.",
+          "guid": "3e0bd6c0e7cf01624dcf2445936b7ab5",
+          "isoDate": "2025-10-05T00:18:45.000Z"
+        }
+      },
+      {
+        "json": {
+          "creator": "LinkedIn",
+          "title": "Web Development Online Training Courses | LinkedIn Learning, formerly Lynda.com",
+          "link": "https://www.linkedin.com/learning/topics/web-development",
+          "pubDate": "Sun, 05 Oct 2025 00:18:45 GMT",
+          "dc:creator": "LinkedIn",
+          "content": "<div><img src=\"https://static.licdn.com/aero-v1/sc/h/50i85klb0hydcf45ieglfsw4w\" style=\"width: 100%;\" /><div>Our Web Development online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Web Development classes to find exactly what you’re looking for.</div></div>",
+          "contentSnippet": "Our Web Development online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Web Development classes to find exactly what you’re looking for.",
+          "guid": "e01528e1aa66cc71327cb633a7daa0dd",
+          "isoDate": "2025-10-05T00:18:45.000Z"
+        }
+      },
+      {
+        "json": {
+          "creator": "LinkedIn",
+          "title": "Animation and Illustration Online Training Courses | LinkedIn Learning, formerly Lynda.com",
+          "link": "https://www.linkedin.com/learning/topics/animation-and-illustration",
+          "pubDate": "Sun, 05 Oct 2025 00:18:44 GMT",
+          "dc:creator": "LinkedIn",
+          "content": "<div><img src=\"https://static.licdn.com/aero-v1/sc/h/50i85klb0hydcf45ieglfsw4w\" style=\"width: 100%;\" /><div>Our Animation and Illustration online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Animation and Illustration classes to find exactly what you’re looking for.</div></div>",
+          "contentSnippet": "Our Animation and Illustration online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Animation and Illustration classes to find exactly what you’re looking for.",
+          "guid": "f34ce41a4a927d53f2f001e8df3e351a",
+          "isoDate": "2025-10-05T00:18:44.000Z"
+        }
+      },
+      {
+        "json": {
+          "creator": "LinkedIn",
+          "title": "Small Business and Entrepreneurship Online Training Courses | LinkedIn Learning, formerly Lynda.com",
+          "link": "https://www.linkedin.com/learning/topics/small-business-and-entrepreneurship",
+          "pubDate": "Sun, 05 Oct 2025 00:18:44 GMT",
+          "dc:creator": "LinkedIn",
+          "content": "<div><img src=\"https://static.licdn.com/aero-v1/sc/h/50i85klb0hydcf45ieglfsw4w\" style=\"width: 100%;\" /><div>Our Small Business and Entrepreneurship online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Small Business and Entrepreneurship classes to find exactly what you’re looking for.</div></div>",
+          "contentSnippet": "Our Small Business and Entrepreneurship online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Small Business and Entrepreneurship classes to find exactly what you’re looking for.",
+          "guid": "13a4683ce79a102ba1c1dacc25b6a5ba",
+          "isoDate": "2025-10-05T00:18:44.000Z"
+        }
+      },
+      {
+        "json": {
+          "creator": "LinkedIn",
+          "title": "Training and Education Online Training Courses | LinkedIn Learning, formerly Lynda.com",
+          "link": "https://www.linkedin.com/learning/topics/training-and-education",
+          "pubDate": "Sun, 05 Oct 2025 00:18:44 GMT",
+          "dc:creator": "LinkedIn",
+          "content": "<div><img src=\"https://static.licdn.com/aero-v1/sc/h/50i85klb0hydcf45ieglfsw4w\" style=\"width: 100%;\" /><div>Our Training and Education online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Training and Education classes to find exactly what you’re looking for.</div></div>",
+          "contentSnippet": "Our Training and Education online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Training and Education classes to find exactly what you’re looking for.",
+          "guid": "f87c48d0fcf27a8681eb2615cc09ef01",
+          "isoDate": "2025-10-05T00:18:44.000Z"
+        }
+      },
+      {
+        "json": {
+          "creator": "LinkedIn",
+          "title": "Human Resources Online Training Courses | LinkedIn Learning, formerly Lynda.com",
+          "link": "https://www.linkedin.com/learning/topics/human-resources-3",
+          "pubDate": "Sun, 05 Oct 2025 00:18:44 GMT",
+          "dc:creator": "LinkedIn",
+          "content": "<div><img src=\"https://static.licdn.com/aero-v1/sc/h/50i85klb0hydcf45ieglfsw4w\" style=\"width: 100%;\" /><div>Our Human Resources online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Human Resources classes to find exactly what you’re looking for.</div></div>",
+          "contentSnippet": "Our Human Resources online training courses from LinkedIn Learning (formerly Lynda.com) provide you with the skills you need, from the fundamentals to advanced tips. Browse our wide selection of Human Resources classes to find exactly what you’re looking for.",
+          "guid": "d2efb959f2434e5a3ae2bfffafabfd21",
+          "isoDate": "2025-10-05T00:18:44.000Z"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "RSS Read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Read": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI1": {
+      "main": [
+        [
+          {
+            "node": "OpenAI2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI2": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "RSS Read1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "OpenAI1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "7bb60df2-a68f-4a87-b835-39c6011c324e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dca484ea057551e94d48b5dcf3413bf3f2be98ac148ebd6a7946da71cd0549ba"
+  },
+  "id": "8TDsgKxoOh7ywGtV",
+  "tags": []
+}
