@@ -9,7 +9,7 @@ This project automates the job application process using n8n and OpenAI's GPT. I
   - Compare resume with job description (score 1-5).
   - Suggest modifications to the resume.
   - Generate personalized cover letters.
-- Collects all details (Job Title, JD, Link, Company, Date, Rating, Cover Letter) in a Google Sheet.
+- Collects all details (Job Title, JD, Link, Company, Date, Rating, Cover Letter) in a Google Sheet - LinkedInJob.xlsx (attached sample output)
 - Helps target high-fit jobs efficiently.
 
 ## Tools & Technologies
