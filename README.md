@@ -19,7 +19,7 @@ This project automates the job application process using n8n and OpenAI's GPT. I
 - LinkedIn RSS feeds
 
 ## Setup Instructions
-1. Import `workflow.n8n` in your n8n instance.
+1. Import `Job Seeking.json` in your n8n instance.
 2. Configure your OpenAI API token.
 3. Connect Google Sheets for logging job data.
 4. Run the workflow.
